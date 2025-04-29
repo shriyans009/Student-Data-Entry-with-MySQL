@@ -58,6 +58,31 @@ public class StudentOperations {
         }
     }
 
+    // Search by Name
+    public void searchByName(String name) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM students WHERE name LIKE ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, "%" + name + "%");
+            ResultSet rs = stmt.executeQuery();
+            boolean found = false;
+            while (rs.next()) {
+                found = true;
+                System.out.println("Student Found: ");
+                System.out.println("Name: " + rs.getString("name") + " | PRN: " + rs.getInt("prn") +
+                        " | Dept: " + rs.getString("dept") + " | Batch: " + rs.getString("batch") +
+                        " | CGPA: " + rs.getFloat("cgpa"));
+            }
+            if (!found) {
+                System.out.println("Student with name " + name + " not found.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching student: " + e.getMessage());
+        }
+    }
+
+    
+
     
     
 }
