@@ -81,6 +81,70 @@ public class StudentOperations {
         }
     }
 
+    // Search by Position (row number)
+    public void searchByPosition(int position) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM students LIMIT 1 OFFSET ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, position);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("Student at Position " + position + ":");
+                System.out.println("Name: " + rs.getString("name") + " | PRN: " + rs.getInt("prn") +
+                        " | Dept: " + rs.getString("dept") + " | Batch: " + rs.getString("batch") +
+                        " | CGPA: " + rs.getFloat("cgpa"));
+            } else {
+                System.out.println("No student found at the given position.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    // Update Student
+    public void updateStudent(int prn) {
+        Scanner scan = new Scanner(System.in);
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM students WHERE prn = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(query);
+            checkStmt.setInt(1, prn);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Enter new Name (leave blank to keep current): ");
+                String name = scan.nextLine();
+                if (name.isEmpty()) name = rs.getString("name");
+
+                System.out.println("Enter new Dept (leave blank to keep current): ");
+                String dept = scan.nextLine();
+                if (dept.isEmpty()) dept = rs.getString("dept");
+
+                System.out.println("Enter new Batch (leave blank to keep current): ");
+                String batch = scan.nextLine();
+                if (batch.isEmpty()) batch = rs.getString("batch");
+
+                System.out.println("Enter new CGPA (or -1 to keep current): ");
+                String input = scan.nextLine();
+                float cgpa = input.isEmpty() || Float.parseFloat(input) == -1 ? rs.getFloat("cgpa") : Float.parseFloat(input);
+
+                String updateQuery = "UPDATE students SET name=?, dept=?, batch=?, cgpa=? WHERE prn=?";
+                PreparedStatement stmt = conn.prepareStatement(updateQuery);
+                stmt.setString(1, name);
+                stmt.setString(2, dept);
+                stmt.setString(3, batch);
+                stmt.setFloat(4, cgpa);
+                stmt.setInt(5, prn);
+                stmt.executeUpdate();
+                System.out.println("Student details updated successfully.");
+            } else {
+                System.out.println("Student with PRN " + prn + " not found.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating student: " + e.getMessage());
+        }
+    }
+
+    
     
 
     
