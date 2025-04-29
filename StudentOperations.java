@@ -38,5 +38,26 @@ public class StudentOperations {
         }
     }
 
+    // Search Student by PRN
+    public void searchByPRN(int prn) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM students WHERE prn = ?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, prn);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("Student Found: ");
+                System.out.println("Name: " + rs.getString("name") + " | PRN: " + rs.getInt("prn") +
+                        " | Dept: " + rs.getString("dept") + " | Batch: " + rs.getString("batch") +
+                        " | CGPA: " + rs.getFloat("cgpa"));
+            } else {
+                System.out.println("Student with PRN " + prn + " not found.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching student: " + e.getMessage());
+        }
+    }
+
+    
     
 }
