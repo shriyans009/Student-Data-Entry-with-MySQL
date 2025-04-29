@@ -144,9 +144,19 @@ public class StudentOperations {
         }
     }
 
-    
-    
-
-    
-    
+    // Delete Student
+    public void deleteStudent(int prn) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "DELETE FROM students WHERE prn=?";
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, prn);
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0)
+                System.out.println("Student deleted successfully.");
+            else
+                System.out.println("Student with PRN " + prn + " not found.");
+        } catch (SQLException e) {
+            System.out.println("Error deleting student: " + e.getMessage());
+        }
+    }
 }
