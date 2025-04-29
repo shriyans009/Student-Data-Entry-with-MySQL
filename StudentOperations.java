@@ -22,5 +22,21 @@ public class StudentOperations {
         }
     }
 
+    // Display all students
+    public void displayStudents() {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM students";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                System.out.println("Name: " + rs.getString("name") + " | PRN: " + rs.getInt("prn") +
+                        " | Dept: " + rs.getString("dept") + " | Batch: " + rs.getString("batch") +
+                        " | CGPA: " + rs.getFloat("cgpa"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching students: " + e.getMessage());
+        }
+    }
+
     
 }
